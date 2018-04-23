@@ -1,0 +1,68 @@
+import java.sql.*;
+
+public class Reminder {
+ private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+   
+   public static void main(String[] args) {
+   Connection connection = null;
+   Statement statement = null;
+   try{
+      
+      Class.forName(JDBC_DRIVER);
+
+      connection = DriverManager.getConnection("jdbc:mysql://localhost/USTGlobal", "root","");
+      System.out.println("Database connected");
+	  String everyDay = "EveryDay";
+      
+      statement = connection.createStatement();
+	  
+	  //create reminders
+      String sql1 = "Insert into Reminder ('id','hour','minute','daysOfWeek','message') values(1,20,30,'Saturday,Sunday','Wake up on weekends') ";
+	  String sql2 = "Insert into Reminder ('id','hour','minute','daysOfWeek','message') values(2,05,30,'Monday,Tuesday,Wednesday,Thursday,Friday','Office Timings') ";
+	  String sql3 = "Insert into Reminder ('id','hour','minute','daysOfWeek','message') values(3,10,30,'Monday,Tuesday,Wednesday,Thursday,Friday','Drink Water when this reminder comes') ";
+	  
+      statement.executeUpdate(sql1);
+	  statement.executeUpdate(sql2);
+	  statement.executeUpdate(sql3);
+  
+	  //update reminders
+	
+		String updateSql = "UPDATE Reminder SET daysOfWeek = "+everyDay+" WHERE ID = 3";
+		statement.executeUpdate(updateSql);
+		
+	// view reminders
+	
+	  String sql = "SELECT id, hour, minute, daysOfWeek, message FROM Reminder";
+      ResultSet rs = statement.executeQuery(sql);
+
+      while(rs.next()){
+         int id  = rs.getInt("id");
+         int hour = rs.getInt("hour");
+         String minute = rs.getString("minute");
+         String daysOfWeek = rs.getString("daysOfWeek");
+
+         System.out.print("ID: " + id);
+         System.out.print(", HOUR: " + hour);
+         System.out.print(", MINUTE: " + minute);
+         System.out.println(", DAYS OF WEEK: " + daysOfWeek);
+      }
+      rs.close();
+   }catch(SQLException se){
+      se.printStackTrace();
+   }catch(Exception e){
+      e.printStackTrace();
+   }finally{
+      try{
+         if(statement!=null)
+            connection.close();
+      }catch(SQLException se){
+      }
+      try{
+         if(connection!=null)
+            connection.close();
+      }catch(SQLException se){
+         se.printStackTrace();
+      }//end finally try
+   }//end try
+}
+}
